@@ -1,14 +1,14 @@
 You are asked to build an Elasticsearch cluster and Kibana server in cloud (AWS) to collect logs.Please consider following questions when you design the solution.
-1,How to provision the cluster in 30 minutes
+1, How to provision the cluster in 30 minutes
 I use ansible to deploy elk stack, usually I used to use jenkins with ansible plugin to deploy.
-git clone https://github.com/sadsfae/ansible-elk
+git clone https://github.com/wandagao/snappay.git
 web use aws cloud so we need to setup system user
 ansible_system_user: ec2-user
 
 2, How to scale up or down the cluster
 
 if you are not able to recover the node, you can add new nodes and let Elasticsearch take care of recovering from any available replica shards; replica shards can be promoted to primary shards and redistributed on the new nodes you just added.
-to scale down: remove a node from cluster like this:
+if you wnat to scale down: remove a node from cluster like this:
 curl -XPUT localhost:9200/_cluster/settings -H 'Content-Type: application/json' -d '{
   "transient" :{
       "cluster.routing.allocation.exclude._ip" : "10.0.0.1"
@@ -22,6 +22,10 @@ The Elasticsearch security features enable you to easily secure a cluster. You c
 You can use Filebeat to monitor the Elasticsearch log files, collect log events, and ship them to the monitoring cluster.
 
 5, How to monitor the performance of the cluster
+We use zabbix to monitor the cluster, cause we integrated all into our zabbix 
+I use opensource at first like this https://github.com/Wasim37/zabbix-es , and then did some development to match our customer's requiremnet.
+
+6, What about if the applications are running in multiple regions, (one system in us-east-1 and one system in us-west-2)
 we can have our  application log write to a replicated queuing system (e.g. Kafka, Redis, RabbitMQ) and have a process (e.g. Logstash) in each DC reading from the relevant queue and indexing documents into the local Elasticsearch cluster.
 This way if network connectivity is lost between the DCs, when it is restored, the indexing will continue where it left off.
 
